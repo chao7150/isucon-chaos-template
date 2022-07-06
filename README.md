@@ -13,8 +13,11 @@ APT::Periodic::Unattended-Upgrade "0";  // 1だったのを0にする
 sudo reboot
 ```
 
+## ミドルウェア
 
-### nginxのログ出力をjsonにする
+### nginx
+
+#### nginxのログ出力をjsonにする
 
 ```
 # /etc/nginx/nginx.conf
@@ -32,53 +35,51 @@ sudo reboot
 	access_log /var/log/nginx/access.log json;
 ```
 
-### nginx.confの変更を反映する
+#### nginx.confの変更を反映する
 
 ```
 sudo nginx -t
 sudo systemctl restart nginx
 ```
+### DB
 
-### alp入れる
+#### インデックス
+
+- EXPLAINでfilesortになっている
+  - MySQL5系ではORDER BYにASCとDESCが混在するとインデックスが効かずfilesortになり遅い
+    - generated column（>=5.7.6）で正負逆転したカラムを作りASCだけかDESCだけにする
+    - https://yk5656.hatenadiary.org/entry/20140206/1392097362
+
+## ツール
+
+### alp
+
+#### インストール
 
 ```
 wget https://github.com/tkuchiki/alp/releases/download/v1.0.9/alp_linux_amd64.tar.gz -P /tmp
 sudo tar -zxvf /tmp/alp_linux_amd64.tar.gz -C /bin
 ```
 
-### alpでnginxのログを集計する
+#### nginxのログを集計する
 
 ```
 sudo alp json --file /var/log/nginx/access.log
 ```
 
-### ab入れる
+### ab
+
+#### インストール
 
 ```
 apt install apache2-utils
 ```
 
-### abする
+#### 使う
 
 ```
 ab -c 1 -n 10 http://localhost/
 ```
-
-### k6インストール
-
-https://k6.io/docs/getting-started/installation/
-```
-sudo mkdir /root/.gnupg
-sudo chmod 700 /root/.gnupg
-sudo gpg --no-default-keyring --keyring /usr/share/keyrings/k6-archive-keyring.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C5AD17C747E3415A3642D57D77C6C491D6AC1D69
-echo "deb [signed-by=/usr/share/keyrings/k6-archive-keyring.gpg] https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
-sudo apt-get update
-sudo apt-get install k6
-```
-
-### k6のシナリオをすばやく作成する
-
-## CPU利用率の見方
 
 ### top
 
@@ -93,6 +94,18 @@ sudo apt-get install k6
 - si ソフト割り込み
 - st ハイパーバイザによる利用
 
+## 操作
+
+### 特定サービスのログを見る
+```
+journalctl -u isuumo.go.service
+```
+
+### sudoでパイプする
+```
+sudo sh -c "cat nginx/sites-enabled/isuumo.conf > /etc/nginx/sies-enabled/isuumo.conf"
+```
+
 ## Linuxのパラメータ
 
 ### ulimit
@@ -102,3 +115,4 @@ sudo apt-get install k6
 - cat /proc/674/limits
 - 見るべきはMax open files
 - 編集は/etc/systemd/system/hoge.serviceで上書き可能
+
