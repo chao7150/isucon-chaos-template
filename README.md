@@ -67,6 +67,34 @@ sudo tar -zxvf /tmp/alp_linux_amd64.tar.gz -C /bin
 sudo alp json --file /var/log/nginx/access.log
 ```
 
+### pt-query-digest
+
+#### インストール
+
+```
+sudo apt install percona-toolkit
+```
+
+### pprof
+
+#### セットアップ
+```go
+アプリケーションに以下を追加
+import _ "net/http/pprof"
+
+go func() {
+	log.Println(http.ListenAndServe("localhost:6060", nil))
+}()
+```
+```
+sudo apt install graphviz
+```
+
+#### 計測
+```
+go tool pprof -http=0.0.0.0:1080 http://localhost:6060/debug/pprof/profile
+```
+
 ### ab
 
 #### インストール
