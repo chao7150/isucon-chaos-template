@@ -53,6 +53,15 @@ sudo systemctl restart nginx
 ```
 ### DB
 
+### スロークエリログ
+
+```
+[mysqld]
+slow_query_log      = 1
+slow_query_log_file = /var/log/mysql/mysql-slow.log
+long_query_time     = 0
+```
+
 #### インデックス
 
 - EXPLAINでfilesortになっている
