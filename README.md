@@ -15,6 +15,16 @@ sudo reboot
 
 ## ミドルウェア
 
+### git
+
+```
+vim ~/.gitconfig
+
+[user]
+        email = chaos@examle.com
+        name = chaos
+```
+
 ### nginx
 
 #### nginxのログ出力をjsonにする
